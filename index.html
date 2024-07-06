@@ -1,25 +1,72 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Notebook</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Note</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 -960 960 960' width='48px' fill='%235f6368'><path d='M220-80q-24 0-42-18t-18-42v-680q0-24 18-42t42-18h361l219 219v521q0 24-18 42t-42 18H220Zm331-554v-186H220v680h520v-494H551ZM220-820v186-186 680-680Z'/></svg>">
 	<style type="text/css">
-		.comments {
-			width:100%;
-			height:100%;
-			/*border: none;*/
-			outline:none;
-			overflow:auto;
-			word-break:break-all;
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        #noteContainer {
+            height: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+		#note {
+			width: 100%;
+			height: 100%;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+			outline: none;
+			overflow: auto;
+			word-break: break-all;
 		}
+        #notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            box-sizing: border-box;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
 	</style>
 	<script type="text/javascript">
 		function ShowConfirmClose() {
-			window.event.returnValue="Are you sure you want to close?";
+			window.event.returnValue="Are you sure you want to exit?";
 		}
-	</script>
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                const textAreaContent = document.getElementById('note').value;
+                const blob = new Blob([textAreaContent], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.download = 'note.txt';
+                link.href = window.URL.createObjectURL(blob);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                const notification = document.getElementById('notification');
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
 </head>
 <body onbeforeunload="ShowConfirmClose()">
-<label>
-	<textarea class="comments"></textarea>
-</label>
+<div id="noteContainer">
+    <textarea id="note"></textarea>
+</div>
+<div id="notification">File has been saved!</div>
 </body>
 </html>
